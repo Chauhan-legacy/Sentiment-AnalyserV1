@@ -1,0 +1,4 @@
+Timestamp,Source,Sentiment,Confidence,Word Count,Review Text
+2026-11-02 18:10,App Store / Social,NEGATIVE,0.894,15,App keeps freezing right on the checkout screen after the latest patch. Very frustrating experience.
+2026-11-01 14:40,Customer Support,NEUTRAL,0.715,17,"Delivery took four days instead of two, though the customer care agent updated my tracking link promptly."
+2026-11-01 09:15,Product Review,POSITIVE,0.942,17,The packaging was neat and the espresso grinder works quietly every morning. Definitely worth the price.

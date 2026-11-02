@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sentiment Journal — AI Feedback Analyzer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg-main: #f5f0ea;
+    --bg-card: #fdfbf7;
+    --bg-subtle: #ede5dc;
+    --border-soft: #dfd5c8;
+    --border-focus: #a68a71;
+    --text-primary: #2e251f;
+    --text-secondary: #6e5f53;
+    --text-muted: #96877a;
+    --accent-brown: #7c5c43;
+    --accent-brown-hover: #634833;
+    --pos-bg: #e6efe8;
+    --pos-text: #2f5e3d;
+    --pos-border: #c5dccb;
+    --neg-bg: #f5e6e4;
+    --neg-text: #8c3b32;
+    --neg-border: #e4c5c1;
+    --neu-bg: #f2ece1;
+    --neu-text: #785f37;
+    --neu-border: #dfd1b8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    line-height: 1.6;
+    padding: 2.5rem 1.5rem 4rem;
+}
+
+.container { max-width: 1080px; margin: 0 auto; }
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 1.75rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border-soft);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.brand-eyebrow {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent-brown);
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+}
+
+h1 {
+    font-family: 'Lora', Georgia, serif;
+    font-size: 1.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.badge {
+    font-size: 0.78rem;
+    background: var(--bg-subtle);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-soft);
+    padding: 0.3rem 0.75rem;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.tab {
+    padding: 0.55rem 1.15rem;
+    border: 1px solid var(--border-soft);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
+}
+
+.tab:hover { background: var(--bg-subtle); color: var(--text-primary); }
+.tab.on {
+    background: var(--accent-brown);
+    color: #fdfbf7;
+    border-color: var(--accent-brown);
+}
+
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 1.65rem 1.75rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 6px rgba(46, 37, 31, 0.03);
+}
+
+textarea {
+    width: 100%;
+    min-height: 118px;
+    padding: 0.75rem 0.85rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-soft);
+    background-color: #faf6f0;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.92rem;
+    resize: vertical;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+textarea:focus { outline: none; border-color: var(--border-focus); background-color: #fff; }
+
+button.p {
+    background-color: var(--accent-brown);
+    color: #fdfbf7;
+    border: none;
+    padding: 0.68rem 1.35rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 1rem;
+    transition: background-color 0.15s ease;
+}
+button.p:hover { background-color: var(--accent-brown-hover); }
+
+button.s {
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-soft);
+    padding: 0.5rem 0.95rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
+}
+button.s:hover { background-color: var(--bg-subtle); color: var(--text-primary); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
+
+.pill {
+    display: inline-block;
+    padding: 0.22rem 0.65rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.74rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.positive { background: var(--pos-bg); color: var(--pos-text); border: 1px solid var(--pos-border); }
+.neutral { background: var(--neu-bg); color: var(--neu-text); border: 1px solid var(--neu-border); }
+.negative { background: var(--neg-bg); color: var(--neg-text); border: 1px solid var(--neg-border); }
+
+.big { font-family: 'Lora', Georgia, serif; font-size: 2.1rem; font-weight: 600; color: var(--text-primary); }
+.muted { color: var(--text-muted); font-size: 0.78rem; margin-top: 0.25rem; }
+
+.bar { height: 8px; border-radius: 4px; background: var(--bg-subtle); overflow: hidden; margin: 6px 0 12px; }
+.bar > i { display: block; height: 100%; border-radius: 4px; }
+
+.row { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; margin: 6px 0; }
+.row .lbl { width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary); }
+.row .track { flex: 1; height: 8px; background: var(--bg-subtle); border-radius: 4px; overflow: hidden; }
+.row .track > i { display: block; height: 100%; border-radius: 4px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+td, th { padding: 0.85rem 1rem; border-bottom: 1px solid var(--bg-subtle); text-align: left; }
+th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); background-color: #faf6f0; }
+tr:hover td { background-color: #faf7f2; }
+td.t { max-width: 480px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-primary); }
+
+.chip {
+    display: inline-block;
+    margin: 2px;
+    padding: 0.2rem 0.55rem;
+    border-radius: 5px;
+    font-size: 0.76rem;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-soft);
+}
+
+.hide { display: none; }
+.err { color: var(--neg-text); margin-top: 8px; font-size: 0.85rem; }
+input[type="file"] { font-size: 0.85rem; color: var(--text-secondary); }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <div>
+        <div class="brand-eyebrow">Natural Language Processing Utility</div>
+        <h1>Customer Feedback &amp; Sentiment Log</h1>
+    </div>
+    <span class="badge">Engine: {{ engine }}</span>
+</header>
+
+<main>
+<div class="tabs">
+  <button class="tab on" data-t="analyze">Inspect Entry</button>
+  <button class="tab" data-t="batch">Batch CSV Upload</button>
+  <button class="tab" data-t="report">Analytics Report</button>
+  <button class="tab" data-t="history">Evaluation Log</button>
+</div>
+
+<section id="analyze">
+  <div class="card">
+    <textarea id="txt" placeholder="Paste a customer note, product review, or support message to evaluate its tone..."></textarea>
+    <button class="p" onclick="analyzeOne()">Run Sentiment Check</button>
+    <div id="err1" class="err"></div>
+  </div>
+  <div id="res" class="card hide"></div>
+</section>
+
+<section id="batch" class="hide">
+  <div class="card">
+    <p class="muted" style="margin-bottom:1rem;">Upload a <b>.csv</b> (with a <code>text</code>/<code>review</code>/<code>comment</code> column) or a <b>.txt</b> (one entry per line), or paste text below.</p>
+    <input type="file" id="file" accept=".csv,.txt"><br><br>
+    <textarea id="multi" placeholder="Or paste multiple entries (one per line)…"></textarea>
+    <button class="p" onclick="runBatch()">Analyze Batch</button>
+    <div id="err2" class="err"></div>
+  </div>
+  <div id="batchRes" class="card hide"></div>
+</section>
+
+<section id="report" class="hide"></section>
+<section id="history" class="hide"></section>
+</main>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const COL={positive:'#2f5e3d',neutral:'#785f37',negative:'#8c3b32'};
+
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
+  ['analyze','batch','report','history'].forEach(s=>$(s).classList.toggle('hide',s!==b.dataset.t));
+  if(b.dataset.t==='report')loadReport(); if(b.dataset.t==='history')loadHistory();
+});
+
+async function post(url,body,isForm){
+  const r=await fetch(url,{method:'POST',headers:isForm?{}:{'Content-Type':'application/json'},body:isForm?body:JSON.stringify(body)});
+  const j=await r.json(); if(!r.ok) throw new Error(j.error||'Request failed'); return j;
+}
+
+function meter(label,val,color){return `<div class="muted">${label} &bull; ${(val*100).toFixed(0)}%</div><div class="bar"><i style="width:${val*100}%;background:${color}"></i></div>`}
+
+async function analyzeOne(){
+  $('err1').textContent='';
+  try{
+    const r=await post('/api/analyze',{text:$('txt').value});
+    const pos=(r.compound+1)/2*100;
+    $('res').classList.remove('hide');
+    $('res').innerHTML=`<div class="grid">
+      <div><span class="pill ${r.label}">${r.label}</span><div class="big">${r.compound.toFixed(3)}</div><div class="muted">Compound score (&minus;1 to +1) &bull; Confidence ${(r.confidence*100).toFixed(0)}%</div>
+        <div class="bar" style="margin-top:14px;position:relative"><i style="width:${pos}%;background:linear-gradient(90deg,#8c3b32,#785f37,#2f5e3d);opacity:.9"></i></div></div>
+      <div>${meter('Positive',r.positive,'#2f5e3d')}${meter('Neutral',r.neutral,'#785f37')}${meter('Negative',r.negative,'#8c3b32')}</div>
+      <div><b>Key words</b><div style="margin-top:6px">${r.keywords.length?r.keywords.map(k=>`<span class="chip" style="color:${k.score>0?'#2f5e3d':'#8c3b32'}">${esc(k.word)} ${k.score>0?'+':''}${k.score}</span>`).join(''):'<span class="muted">No sentiment words found.</span>'}</div></div>
+    </div>`;
+  }catch(e){$('err1').textContent=e.message}
+}
+
+async function runBatch(){
+  $('err2').textContent='';
+  try{
+    let r; const f=$('file').files[0];
+    if(f){const fd=new FormData();fd.append('file',f);r=await post('/api/batch',fd,true);}
+    else r=await post('/api/batch',{texts:$('multi').value.split('\n')});
+    $('batchRes').classList.remove('hide');
+    $('batchRes').innerHTML=`<b>${r.count} entries analyzed</b> &mdash; `+['positive','neutral','negative'].map(k=>`<span class="pill ${k}">${k}: ${r.counts[k]||0}</span>`).join(' ')+
+     `<div class="table-container" style="margin-top:14px"><table><tr><th>Excerpt</th><th>Classification</th><th>Score</th></tr>${r.results.slice(0,50).map(x=>`<tr><td class="t">${esc(x.text)}</td><td><span class="pill ${x.label}">${x.label}</span></td><td>${x.compound}</td></tr>`).join('')}</table></div>
+     <p class="muted" style="margin-top:10px">Showing first 50. Open the Analytics Report tab for full charts.</p>`;
+  }catch(e){$('err2').textContent=e.message}
+}
+
+function donut(c){
+  const t=c.positive+c.neutral+c.negative||1,R=60,C=2*Math.PI*R;let off=0,out='';
+  for(const k of ['positive','neutral','negative']){const len=c[k]/t*C;
+    out+=`<circle r="${R}" cx="80" cy="80" fill="none" stroke="${COL[k]}" stroke-width="24" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}" transform="rotate(-90 80 80)"/>`;off+=len}
+  return `<svg viewBox="0 0 160 160" width="150">${out}<text x="80" y="86" text-anchor="middle" font-size="22" font-weight="600" fill="var(--text-primary)">${c.positive+c.neutral+c.negative}</text></svg>`;
+}
+function bars(items,color){const m=Math.max(1,...items.map(i=>i[1]));return items.length?items.map(([w,n])=>`<div class="row"><span class="lbl">${esc(w)}</span><span class="track"><i style="width:${n/m*100}%;background:${color}"></i></span><span style="font-weight:500">${n}</span></div>`).join(''):'<span class="muted">No data yet.</span>'}
+function line(trend){
+  if(!trend.length)return '<span class="muted">No data yet.</span>';
+  const W=420,H=140,pts=trend.map((d,i)=>[trend.length===1?W/2:20+i*(W-40)/(trend.length-1),H/2-d.avg*(H/2-14)]);
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%"><line x1="0" x2="${W}" y1="${H/2}" y2="${H/2}" stroke="var(--border-soft)"/>
+   <polyline fill="none" stroke="var(--accent-brown)" stroke-width="2.5" points="${pts.map(p=>p.join(',')).join(' ')}"/>
+   ${pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="var(--accent-brown)"><title>${trend[i].date}: ${trend[i].avg} (${trend[i].n})</title></circle>`).join('')}</svg>`;
+}
+function hist(b){const m=Math.max(1,...b);return `<div style="display:flex;align-items:flex-end;gap:4px;height:120px;padding-top:10px">${b.map((n,i)=>`<div style="flex:1;text-align:center;font-size:.7rem"><div style="height:${n/m*90}px;background:${i<4?'#8c3b32':i>5?'#2f5e3d':'#785f37'};border-radius:3px 3px 0 0" title="${n}"></div><span style="color:var(--text-muted)">${(-1+i*0.2).toFixed(1)}</span></div>`).join('')}</div>`}
+
+async function loadReport(){
+  const r=await (await fetch('/api/report')).json();
+  $('report').innerHTML=r.total?`
+   <div class="grid">
+     <div class="card" style="text-align:center"><b>Tone Breakdown</b><br><div style="margin:10px 0">${donut(r.counts)}</div><div>${['positive','neutral','negative'].map(k=>`<span class="pill ${k}">${k} ${r.counts[k]}</span>`).join(' ')}</div></div>
+     <div class="card"><b>Overall Mood</b><div class="big">${r.average}</div><div class="muted">Average compound score across ${r.total} evaluations</div><br><b>Score Distribution</b>${hist(r.histogram)}</div>
+   </div>
+   <div class="card"><b>Daily Average Trend</b><div style="margin-top:10px">${line(r.trend)}</div></div>
+   <div class="grid">
+     <div class="card"><b>Top Positive Keywords</b><div style="margin-top:10px">${bars(r.top_positive,'#2f5e3d')}</div></div>
+     <div class="card"><b>Top Negative Keywords</b><div style="margin-top:10px">${bars(r.top_negative,'#8c3b32')}</div></div>
+   </div>
+   <div style="display:flex;gap:0.75rem;align-items:center">
+     <a href="/api/export" style="text-decoration:none"><button class="s">⬇ Export CSV Log</button></a>
+     <button class="s" onclick="clearAll()" style="border-color:#e4c5c1;color:#8c3b32">🗑 Clear Evaluation Log</button>
+   </div>`
+   :'<div class="card muted" style="text-align:center;padding:3rem">No entries evaluated yet. Inspect an entry or upload a CSV batch to view analytics.</div>';
+}
+async function loadHistory(){
+  const h=await (await fetch('/api/history')).json();
+  $('history').innerHTML=`<div class="card"><table><tr><th>Recorded</th><th>Excerpt</th><th>Classification</th><th>Score</th></tr>${h.map(x=>`<tr><td style="color:var(--text-muted);font-size:0.8rem">${x.created_at}</td><td class="t">${esc(x.text)}</td><td><span class="pill ${x.label}">${x.label}</span></td><td style="font-weight:500">${x.compound}</td></tr>`).join('')||'<tr><td colspan="4" class="muted" style="text-align:center">No records found.</td></tr>'}</table></div>`;
+}
+async function clearAll(){if(confirm('Delete all saved analyses?')){await fetch('/api/clear',{method:'POST'});loadReport()}}
+</script>
+</body>
+</html>

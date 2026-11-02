@@ -1,0 +1,11 @@
+review_id,review_text,sentiment
+1,Absolute perfection! This is hands down the best product I have ever purchased in my entire life. Life-changing quality!,extremely_positive
+2,"Terrible, garbage product. Broke within five seconds of opening the box. Total scam and waste of money!",extremely_negative
+3,"Exceeded all possible expectations! Phenomenal craftsmanship, lightning-fast shipping, and stellar customer service. 10/10!",extremely_positive
+4,Worst experience ever. Customer service was incredibly rude and the item arrived completely shattered and used.,extremely_negative
+5,Pure magic! I am in love with this. Flawless performance and worth every single penny. Will buy for everyone I know!,extremely_positive
+6,Horrible piece of trash. Stopped working immediately and customer support ignored my emails. Do not buy!,extremely_negative
+7,Beyond amazing! Outstanding design and unbelievable durability. Best purchase of the decade!,extremely_positive
+8,"Utter disaster. Faulty, unsafe, and utterly useless. Total disappointment and regret this purchase.",extremely_negative
+9,"Magnificent! Flawless, gorgeous, and works like absolute perfection. Couldn't ask for anything better!",extremely_positive
+10,Disaster! Complete junk that fell apart instantly. Absolutely furious with this garbage product.,extremely_negative
